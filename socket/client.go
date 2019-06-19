@@ -1,4 +1,4 @@
-package sockets
+package socket
 
 import (
 	"bytes"
@@ -51,8 +51,10 @@ func (c *Client) writeMessage(){
 	}
 }
 
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request){
-	conn, err := websocket.Upgrader{HandshakeTimeout:1024,ReadBufferSize:1024}.Upgrade(
+func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request){
+	upgrader := websocket.Upgrader{HandshakeTimeout:1024,ReadBufferSize:1024}
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	conn, err := upgrader.Upgrade(
 		w,r,nil)
 	if err != nil {
 		log.Println(err)

@@ -1,4 +1,4 @@
-package sockets
+package socket
 
 import "encoding/json"
 
@@ -11,6 +11,15 @@ type Hub struct {
 	messages chan Message
 	register chan *Client //register clients
 	unregister chan *Client
+}
+
+func NewHub() *Hub{
+	return &Hub{
+		messages:  make(chan Message),
+		register:   make(chan *Client),
+		unregister: make(chan *Client),
+		clients:    make(map[*Client]bool),
+	}
 }
 
 func (h *Hub) run(){

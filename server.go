@@ -1,21 +1,17 @@
-package sockets
+package main
 
 import (
 	"flag"
 	"net/http"
+	"sockets/socket"
 )
 
 func runServer(port string) error{
-	hub := &Hub{
-		messages:  make(chan Message),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
-	}
+	hub := socket.NewHub()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", func(w http.ResponseWriter,r *http.Request) {
-		serveWs(hub,w,r)
+		socket.ServeWs(hub,w,r)
 	})
 
 	s:= http.Server{Addr:":" + port, Handler:mux}
@@ -24,7 +20,7 @@ func runServer(port string) error{
 }
 
 func main(){
-	port := flag.String("port", ":9000", "port for server")
+	port := flag.String("port", "9000", "port for server")
 	flag.Parse()
 	runServer(*port)
 }

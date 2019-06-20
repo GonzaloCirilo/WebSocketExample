@@ -2,12 +2,14 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	"sockets/socket"
 )
 
 func runServer(port string) error{
 	hub := socket.NewHub()
+	go hub.Run()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", func(w http.ResponseWriter,r *http.Request) {
@@ -15,6 +17,7 @@ func runServer(port string) error{
 	})
 
 	s:= http.Server{Addr:":" + port, Handler:mux}
+	fmt.Printf("Server listening at port %s", port)
 	return s.ListenAndServe()
 
 }
